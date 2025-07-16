@@ -2,11 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:gravity="center"
-    android:orientation="vertical">
+    android:padding="24dp"
+    android:background="@android:color/white">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/button_upload_old_record"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello from Java!" />
+        android:text="Upload Old Record"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/button_add_new_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add New Record"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/button_send_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Record" />
+
 </LinearLayout>
