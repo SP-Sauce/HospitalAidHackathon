@@ -2,60 +2,82 @@ package com.sh.hospitaldata;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import com.sh.hospitaldata.data.PatientViewModel;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
+
+import java.util.concurrent.Executor;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button uploadOldRecordBtn, addNewRecordBtn, sendRecordBtn;
-    private PatientViewModel patientViewModel;
+    private Button patientLoginBtn, doctorLoginBtn;
+
+    private Executor executor;
+    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt.PromptInfo promptInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        uploadOldRecordBtn = findViewById(R.id.button_upload_old_record);
-        addNewRecordBtn = findViewById(R.id.button_add_new_record);
-        sendRecordBtn = findViewById(R.id.button_send_record);
+        patientLoginBtn = findViewById(R.id.button_patient_login);
+        doctorLoginBtn = findViewById(R.id.button_doctor_login);
 
-        // Initialize ViewModel
-        patientViewModel = new ViewModelProvider(this).get(PatientViewModel.class);
+        //Patient login: No authentication
+        patientLoginBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, PatientUserPage.class);
+            startActivity(intent);
+        });
 
-        uploadOldRecordBtn.setOnClickListener(new View.OnClickListener() {
+        //Doctor login: Requires biometric authentication
+        executor = ContextCompat.getMainExecutor(this);
+        biometricPrompt = new BiometricPrompt(MainActivity.this,
+                executor, new BiometricPrompt.AuthenticationCallback() {
             @Override
-            public void onClick(View view) {
-                // TODO: Launch camera or OCR activity
-                Toast.makeText(MainActivity.this, "Upload feature coming soon", Toast.LENGTH_SHORT).show();
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Doctor authenticated ", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainActivity.this, DoctorUserPage.class));
+                });
+            }
+
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+                runOnUiThread(() -> 
+                    Toast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT).show()
+                );
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+                runOnUiThread(() -> 
+                    Toast.makeText(getApplicationContext(), "Face not recognized ", Toast.LENGTH_SHORT).show()
+                );
             }
         });
 
-        addNewRecordBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Launch AddRecordActivity
-                Intent intent = new Intent(MainActivity.this, AddRecordActivity.class);
-                startActivity(intent);
-            }
-        });
+        promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle("Doctor Login")
+                .setSubtitle("Use Face ID to continue")
+                .setNegativeButtonText("Cancel")
+                .build();
 
-        sendRecordBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO: Launch Bluetooth send activity
-                Toast.makeText(MainActivity.this, "Send feature coming soon", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Optional: Observe all records for debugging
-        patientViewModel.getAllRecords().observe(this, patientRecords -> {
-            // You can add logging here to see when records are added
-            if (patientRecords != null) {
-                // Log.d("MainActivity", "Total records: " + patientRecords.size());
+        doctorLoginBtn.setOnClickListener(v -> {
+            BiometricManager biometricManager = BiometricManager.from(this);
+            if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                    == BiometricManager.BIOMETRIC_SUCCESS) {
+                biometricPrompt.authenticate(promptInfo);
+            } else {
+                Toast.makeText(this, "Biometric login not available on this device", Toast.LENGTH_SHORT).show();
             }
         });
     }
