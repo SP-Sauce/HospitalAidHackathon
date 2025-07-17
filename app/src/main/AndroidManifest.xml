@@ -14,12 +14,19 @@
         android:theme="@style/Theme.HospitalData"
         tools:targetApi="31">
 
-        <activity android:name=".MainActivity" android:exported="true">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".AddRecordActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
 
     </application>
 
