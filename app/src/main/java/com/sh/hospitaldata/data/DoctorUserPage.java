@@ -1,4 +1,4 @@
-package com.sh.hospitaldata;
+package com.sh.hospitaldata.data;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,7 +7,8 @@ import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import com.sh.hospitaldata.data.PatientViewModel;
+
+import com.sh.hospitaldata.R;
 
 public class DoctorUserPage extends AppCompatActivity {
 
@@ -17,7 +18,7 @@ public class DoctorUserPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_doctor_user_page);
 
         uploadOldRecordBtn = findViewById(R.id.button_upload_old_record);
         addNewRecordBtn = findViewById(R.id.button_add_new_record);
@@ -30,7 +31,7 @@ public class DoctorUserPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO: Launch camera or OCR activity
-                Toast.makeText(MainActivity.this, "Upload feature coming soon", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DoctorUserPage.this, "Upload feature coming soon", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -38,7 +39,7 @@ public class DoctorUserPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Launch AddRecordActivity
-                Intent intent = new Intent(MainActivity.this, AddRecordActivity.class);
+                Intent intent = new Intent(DoctorUserPage.this, com.sh.hospitaldata.AddRecordActivity.class);
                 startActivity(intent);
             }
         });
@@ -47,7 +48,7 @@ public class DoctorUserPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO: Launch Bluetooth send activity
-                Toast.makeText(MainActivity.this, "Send feature coming soon", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DoctorUserPage.this, "Send feature coming soon", Toast.LENGTH_SHORT).show();
             }
         });
 

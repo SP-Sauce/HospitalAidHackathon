@@ -44,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
                 super.onAuthenticationSucceeded(result);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Doctor authenticated ", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(MainActivity.this, DoctorUserPage.class));
+                    // Launch AddRecordActivity
+                    Intent intent = new Intent(MainActivity.this, com.sh.hospitaldata.data.DoctorUserPage.class);
+                    startActivity(intent);
                 });
             }
 
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
                     == BiometricManager.BIOMETRIC_SUCCESS) {
                 biometricPrompt.authenticate(promptInfo);
+
             } else {
                 Toast.makeText(this, "Biometric login not available on this device", Toast.LENGTH_SHORT).show();
             }
