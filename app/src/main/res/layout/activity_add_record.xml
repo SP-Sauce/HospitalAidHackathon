@@ -10,6 +10,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Spacer to push content down -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="64dp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +35,6 @@
                 android:layout_height="wrap_content"
                 android:hint="Patient Name"
                 android:inputType="textPersonName" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -44,7 +48,6 @@
                 android:layout_height="wrap_content"
                 android:hint="Age"
                 android:inputType="number" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -58,7 +61,6 @@
                 android:layout_height="wrap_content"
                 android:hint="Gender"
                 android:inputType="text" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -73,7 +75,6 @@
                 android:hint="Medical Condition"
                 android:inputType="textMultiLine"
                 android:lines="3" />
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -98,7 +99,6 @@
                 android:layout_weight="1"
                 android:text="Save Record"
                 android:layout_marginStart="8dp" />
-
         </LinearLayout>
 
     </LinearLayout>
