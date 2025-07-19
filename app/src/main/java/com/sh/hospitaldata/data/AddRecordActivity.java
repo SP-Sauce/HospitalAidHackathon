@@ -1,22 +1,33 @@
-package com.sh.hospitaldata;
+package com.sh.hospitaldata.data;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.sh.hospitaldata.R;
+import com.sh.hospitaldata.data.PatientDetailActivity;
 import com.sh.hospitaldata.data.PatientRecord;
 import com.sh.hospitaldata.data.PatientViewModel;
 import java.util.List;
 
 public class AddRecordActivity extends AppCompatActivity {
 
+    private TextView titleText;
     private EditText editTextName, editTextAge, editTextGender, editTextCondition;
     private Button buttonSave, buttonCancel;
     private PatientViewModel patientViewModel;
+
+    // Edit mode variables
+    private boolean isEditMode = false;
+    private int editPatientId = -1;
+    private PatientRecord originalPatient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,22 +35,12 @@ public class AddRecordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_record);
 
         initViews();
-
         patientViewModel = new ViewModelProvider(this).get(PatientViewModel.class);
 
-        buttonSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveRecord();
-            }
-        });
+        // Check if we're in edit mode
+        checkEditMode();
 
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        setupClickListeners();
     }
 
     private void initViews() {
@@ -49,6 +50,61 @@ public class AddRecordActivity extends AppCompatActivity {
         editTextCondition = findViewById(R.id.edit_text_condition);
         buttonSave = findViewById(R.id.button_save);
         buttonCancel = findViewById(R.id.button_cancel);
+    }
+
+    private void checkEditMode() {
+        Intent intent = getIntent();
+        isEditMode = intent.getBooleanExtra("edit_mode", false);
+
+        if (isEditMode) {
+            // Update title and button text for edit mode
+            setTitle("Edit Patient Record");
+            buttonSave.setText("Update Record");
+
+            // Get patient data for editing
+            editPatientId = intent.getIntExtra(PatientDetailActivity.EXTRA_PATIENT_ID, -1);
+            String patientName = intent.getStringExtra(PatientDetailActivity.EXTRA_PATIENT_NAME);
+            int patientAge = intent.getIntExtra(PatientDetailActivity.EXTRA_PATIENT_AGE, 0);
+            String patientGender = intent.getStringExtra(PatientDetailActivity.EXTRA_PATIENT_GENDER);
+            String patientCondition = intent.getStringExtra(PatientDetailActivity.EXTRA_PATIENT_CONDITION);
+
+            // Create original patient record for comparison
+            originalPatient = new PatientRecord(patientName, patientAge, patientGender, patientCondition);
+            originalPatient.setId(editPatientId);
+
+            // Populate fields with existing data
+            populateFieldsForEdit(patientName, patientAge, patientGender, patientCondition);
+        } else {
+            setTitle("Add Patient Record");
+            buttonSave.setText("Save Record");
+        }
+    }
+
+    private void populateFieldsForEdit(String name, int age, String gender, String condition) {
+        editTextName.setText(name);
+        editTextAge.setText(String.valueOf(age));
+        editTextGender.setText(gender);
+        editTextCondition.setText(condition);
+    }
+
+    private void setupClickListeners() {
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isEditMode) {
+                    updateRecord();
+                } else {
+                    saveRecord();
+                }
+            }
+        });
+
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void saveRecord() {
@@ -83,14 +139,64 @@ public class AddRecordActivity extends AppCompatActivity {
                 @Override
                 public void onError(Exception e) {
                     Toast.makeText(AddRecordActivity.this, "Error checking for duplicates: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    // Optionally, you could still save the record here
-                    // patientViewModel.insert(patientRecord);
                 }
             });
 
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Please enter a valid age", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void updateRecord() {
+        String name = editTextName.getText().toString().trim();
+        String ageString = editTextAge.getText().toString().trim();
+        String gender = editTextGender.getText().toString().trim();
+        String condition = editTextCondition.getText().toString().trim();
+
+        if (name.isEmpty() || ageString.isEmpty() || gender.isEmpty() || condition.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            int age = Integer.parseInt(ageString);
+
+            // Create updated patient record
+            PatientRecord updatedPatient = new PatientRecord(name, age, gender, condition);
+            updatedPatient.setId(editPatientId);
+
+            // Check if data actually changed
+            if (hasDataChanged(updatedPatient)) {
+                // Update the record
+                patientViewModel.update(updatedPatient);
+
+                // Return result to PatientDetailActivity
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra(PatientDetailActivity.EXTRA_PATIENT_NAME, name);
+                resultIntent.putExtra(PatientDetailActivity.EXTRA_PATIENT_AGE, age);
+                resultIntent.putExtra(PatientDetailActivity.EXTRA_PATIENT_GENDER, gender);
+                resultIntent.putExtra(PatientDetailActivity.EXTRA_PATIENT_CONDITION, condition);
+                setResult(RESULT_OK, resultIntent);
+
+                Toast.makeText(this, "Record updated successfully", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "No changes detected", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Please enter a valid age", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean hasDataChanged(PatientRecord newPatient) {
+        if (originalPatient == null) return true;
+
+        return !originalPatient.getName().equals(newPatient.getName()) ||
+                originalPatient.getAge() != newPatient.getAge() ||
+                !originalPatient.getGender().equals(newPatient.getGender()) ||
+                !originalPatient.getCondition().equals(newPatient.getCondition());
     }
 
     private void showDuplicateDialog(List<PatientRecord> duplicates, PatientRecord newRecord) {
