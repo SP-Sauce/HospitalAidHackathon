@@ -1,5 +1,6 @@
 package com.sh.hospitaldata.camera;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,6 +31,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class ScanResultActivity extends AppCompatActivity {
 
@@ -219,15 +221,74 @@ public class ScanResultActivity extends AppCompatActivity {
             gender = "Not specified";
         }
 
-        // Create and save the patient record
+        // Create the patient record
         PatientRecord patientRecord = new PatientRecord(name, age, gender, condition);
-        patientViewModel.insert(patientRecord);
 
-        Toast.makeText(this, "Patient record saved successfully!", Toast.LENGTH_LONG).show();
+        // Check for duplicates before saving
+        patientViewModel.insertWithDuplicateCheck(patientRecord, new PatientViewModel.DuplicateCheckCallback() {
+            @Override
+            public void onDuplicateFound(List<PatientRecord> duplicates) {
+                showDuplicateDialog(duplicates, patientRecord);
+            }
 
-        // Clean up and return
-        cleanupImageFile();
-        finish();
+            @Override
+            public void onNoDuplicateFound() {
+                Toast.makeText(ScanResultActivity.this, "Patient record saved successfully!", Toast.LENGTH_LONG).show();
+                cleanupImageFile();
+                finish();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(ScanResultActivity.this, "Error checking for duplicates: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                // Optionally, you could still save the record here
+                // patientViewModel.insert(patientRecord);
+                // cleanupImageFile();
+                // finish();
+            }
+        });
+    }
+
+    private void showDuplicateDialog(List<PatientRecord> duplicates, PatientRecord newRecord) {
+        StringBuilder message = new StringBuilder();
+        message.append("A patient with similar details already exists:\n\n");
+
+        for (PatientRecord duplicate : duplicates) {
+            message.append("• ").append(duplicate.getName())
+                    .append(", Age: ").append(duplicate.getAge())
+                    .append(", Gender: ").append(duplicate.getGender())
+                    .append("\n  Condition: ").append(duplicate.getCondition())
+                    .append("\n\n");
+        }
+
+        message.append("Do you still want to add this new record?");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Duplicate Patient Found");
+        builder.setMessage(message.toString());
+
+        builder.setPositiveButton("Add Anyway", (dialog, which) -> {
+            // User chooses to add the record despite duplicates
+            patientViewModel.insert(newRecord);
+            Toast.makeText(ScanResultActivity.this, "Patient record saved successfully!", Toast.LENGTH_LONG).show();
+            cleanupImageFile();
+            finish();
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            // User chooses not to add the record
+            dialog.dismiss();
+        });
+
+        builder.setNeutralButton("Edit Record", (dialog, which) -> {
+            // User wants to modify the current record
+            dialog.dismiss();
+            // Focus could be set to the first field for editing
+            editExtractedName.requestFocus();
+        });
+
+        builder.setCancelable(false); // Prevent dismissing by touching outside
+        builder.show();
     }
 
     private void onTextRecognitionFailure(@NonNull Exception e) {
