@@ -7,6 +7,14 @@
     android:padding="24dp"
     android:background="@android:color/white">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Doctor Dashboard"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp" />
+
     <Button
         android:id="@+id/button_upload_old_record"
         android:layout_width="match_parent"
@@ -19,6 +27,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add New Record"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/button_view_all_records"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View All Records"
         android:layout_marginBottom="16dp"/>
 
     <Button
