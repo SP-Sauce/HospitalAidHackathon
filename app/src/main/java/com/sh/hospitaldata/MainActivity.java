@@ -44,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
                 super.onAuthenticationSucceeded(result);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Doctor authenticated ", Toast.LENGTH_SHORT).show();
-                    // Launch AddRecordActivity
+                    // Launch DoctorUserPage and clear the activity stack
                     Intent intent = new Intent(MainActivity.this, com.sh.hospitaldata.data.DoctorUserPage.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 });
             }
@@ -53,16 +54,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
                 super.onAuthenticationError(errorCode, errString);
-                runOnUiThread(() -> 
-                    Toast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT).show()
+                runOnUiThread(() ->
+                        Toast.makeText(getApplicationContext(), "Authentication error: " + errString, Toast.LENGTH_SHORT).show()
                 );
             }
 
             @Override
             public void onAuthenticationFailed() {
                 super.onAuthenticationFailed();
-                runOnUiThread(() -> 
-                    Toast.makeText(getApplicationContext(), "Face not recognized ", Toast.LENGTH_SHORT).show()
+                runOnUiThread(() ->
+                        Toast.makeText(getApplicationContext(), "Face not recognized ", Toast.LENGTH_SHORT).show()
                 );
             }
         });
