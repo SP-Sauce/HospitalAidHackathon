@@ -6,8 +6,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +37,13 @@ public class ScanResultActivity extends AppCompatActivity {
 
     private ImageView imageCaptured;
     private TextView textExtracted;
-    private Button buttonUpload;
+    private TextView textRawLabel;
+    private ScrollView scrollRawText;
+    private EditText editExtractedName;
+    private EditText editExtractedAge;
+    private EditText editExtractedGender;
+    private EditText editExtractedCondition;
+    private Button buttonSaveRecord;
     private Button buttonRetry;
 
     private String imagePath;
@@ -66,12 +75,19 @@ public class ScanResultActivity extends AppCompatActivity {
     private void initViews() {
         imageCaptured = findViewById(R.id.image_captured);
         textExtracted = findViewById(R.id.text_extracted);
-        buttonUpload = findViewById(R.id.button_upload);
+        textRawLabel = findViewById(R.id.text_raw_label);
+        scrollRawText = findViewById(R.id.scroll_raw_text);
+        editExtractedName = findViewById(R.id.edit_extracted_name);
+        editExtractedAge = findViewById(R.id.edit_extracted_age);
+        editExtractedGender = findViewById(R.id.edit_extracted_gender);
+        editExtractedCondition = findViewById(R.id.edit_extracted_condition);
+        buttonSaveRecord = findViewById(R.id.button_save_record);
         buttonRetry = findViewById(R.id.button_retry);
     }
 
     private void setupClickListeners() {
-        buttonUpload.setOnClickListener(v -> processExtractedText());
+        buttonSaveRecord.setOnClickListener(v -> saveManuallyEditedRecord());
+
         buttonRetry.setOnClickListener(v -> {
             // Delete the current image file
             if (imagePath != null) {
@@ -85,6 +101,17 @@ public class ScanResultActivity extends AppCompatActivity {
             Intent intent = new Intent(this, FormScannerActivity.class);
             startActivity(intent);
             finish();
+        });
+
+        // Toggle raw text visibility
+        textRawLabel.setOnClickListener(v -> {
+            if (scrollRawText.getVisibility() == View.GONE) {
+                scrollRawText.setVisibility(View.VISIBLE);
+                textRawLabel.setText("▲ Raw Extracted Text (tap to collapse)");
+            } else {
+                scrollRawText.setVisibility(View.GONE);
+                textRawLabel.setText("▼ Raw Extracted Text (tap to expand)");
+            }
         });
     }
 
@@ -124,41 +151,88 @@ public class ScanResultActivity extends AppCompatActivity {
 
         if (extractedText.isEmpty()) {
             textExtracted.setText("No text found in the image. Please try again with better lighting or focus.");
+            // Set empty values in edit fields
+            editExtractedName.setText("");
+            editExtractedAge.setText("");
+            editExtractedGender.setText("");
+            editExtractedCondition.setText("");
         } else {
             textExtracted.setText(extractedText);
             Log.d(TAG, "Extracted text: " + extractedText);
+
+            // Parse the text and populate the edit fields
+            PatientRecord parsedRecord = parseTextToPatientRecord(extractedText);
+            populateEditFields(parsedRecord);
         }
+    }
+
+    private void populateEditFields(PatientRecord record) {
+        if (record != null) {
+            editExtractedName.setText(record.getName().equals("Scanned Patient") ? "" : record.getName());
+            editExtractedAge.setText(record.getAge() == 0 ? "" : String.valueOf(record.getAge()));
+            editExtractedGender.setText(record.getGender().equals("Unknown") ? "" : record.getGender());
+            editExtractedCondition.setText(record.getCondition().equals("See scanned document") ? "" : record.getCondition());
+
+            Log.d(TAG, "Populated edit fields with parsed data");
+        }
+    }
+
+    private void saveManuallyEditedRecord() {
+        // Get values from edit fields
+        String name = editExtractedName.getText().toString().trim();
+        String ageString = editExtractedAge.getText().toString().trim();
+        String gender = editExtractedGender.getText().toString().trim();
+        String condition = editExtractedCondition.getText().toString().trim();
+
+        // Validate required fields
+        if (name.isEmpty()) {
+            editExtractedName.setError("Name is required");
+            editExtractedName.requestFocus();
+            return;
+        }
+
+        if (condition.isEmpty()) {
+            editExtractedCondition.setError("Medical condition is required");
+            editExtractedCondition.requestFocus();
+            return;
+        }
+
+        // Parse age
+        int age = 0;
+        if (!ageString.isEmpty()) {
+            try {
+                age = Integer.parseInt(ageString);
+                if (age < 0 || age > 150) {
+                    editExtractedAge.setError("Please enter a valid age (0-150)");
+                    editExtractedAge.requestFocus();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                editExtractedAge.setError("Please enter a valid number");
+                editExtractedAge.requestFocus();
+                return;
+            }
+        }
+
+        // Set default values for empty optional fields
+        if (gender.isEmpty()) {
+            gender = "Not specified";
+        }
+
+        // Create and save the patient record
+        PatientRecord patientRecord = new PatientRecord(name, age, gender, condition);
+        patientViewModel.insert(patientRecord);
+
+        Toast.makeText(this, "Patient record saved successfully!", Toast.LENGTH_LONG).show();
+
+        // Clean up and return
+        cleanupImageFile();
+        finish();
     }
 
     private void onTextRecognitionFailure(@NonNull Exception e) {
         Log.e(TAG, "Text recognition failed", e);
         textExtracted.setText("Failed to extract text. Please try again.");
-    }
-
-    private void processExtractedText() {
-        if (extractedText.isEmpty()) {
-            Toast.makeText(this, "No text extracted. Please retry scanning.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Simple text parsing - you can make this more sophisticated
-        PatientRecord record = parseTextToPatientRecord(extractedText);
-
-        if (record != null) {
-            // Save to database
-            patientViewModel.insert(record);
-
-            Toast.makeText(this, "Patient record uploaded successfully!", Toast.LENGTH_SHORT).show();
-
-            // Clean up image file
-            cleanupImageFile();
-
-            // Return to main screen
-            finish();
-        } else {
-            Toast.makeText(this, "Could not parse patient information. Please add manually.",
-                    Toast.LENGTH_LONG).show();
-        }
     }
 
     private PatientRecord parseTextToPatientRecord(String text) {

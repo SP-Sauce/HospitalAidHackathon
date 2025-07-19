@@ -29,20 +29,26 @@
             android:scaleType="centerCrop"
             android:background="@android:color/darker_gray" />
 
-        <!-- Extracted Text Section -->
+        <!-- Raw Extracted Text Section (Collapsible) -->
         <TextView
+            android:id="@+id/text_raw_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Extracted Text:"
-            android:textSize="16sp"
+            android:text="▼ Raw Extracted Text (tap to expand)"
+            android:textSize="14sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="8dp"
+            android:textColor="@color/purple_700" />
 
         <ScrollView
+            android:id="@+id/scroll_raw_text"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="100dp"
             android:layout_marginBottom="16dp"
-            android:background="@android:color/background_light">
+            android:background="@android:color/background_light"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/text_extracted"
@@ -50,10 +56,76 @@
                 android:layout_height="wrap_content"
                 android:padding="12dp"
                 android:text="Processing..."
-                android:textSize="14sp"
-                android:textColor="@android:color/black" />
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray" />
 
         </ScrollView>
+
+        <!-- Extracted Patient Information Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Extracted Patient Information:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Patient Name Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Patient Name">
+
+            <EditText
+                android:id="@+id/edit_extracted_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Age Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Age">
+
+            <EditText
+                android:id="@+id/edit_extracted_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Gender Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Gender">
+
+            <EditText
+                android:id="@+id/edit_extracted_gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Medical Condition Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Medical Condition">
+
+            <EditText
+                android:id="@+id/edit_extracted_condition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:lines="3" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Buttons -->
         <LinearLayout
@@ -63,10 +135,10 @@
             android:layout_marginTop="16dp">
 
             <Button
-                android:id="@+id/button_upload"
+                android:id="@+id/button_save_record"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Upload"
+                android:text="Save Patient Record"
                 android:layout_marginBottom="12dp"
                 android:background="@color/purple_500"
                 android:textColor="@android:color/white" />
@@ -75,7 +147,7 @@
                 android:id="@+id/button_retry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Retry"
+                android:text="Retry Scan"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
         </LinearLayout>
