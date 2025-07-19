@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.sh.hospitaldata.R;
+import com.sh.hospitaldata.camera.FormScannerActivity;
 
 public class DoctorUserPage extends AppCompatActivity {
 
@@ -31,8 +32,9 @@ public class DoctorUserPage extends AppCompatActivity {
         uploadOldRecordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Launch camera or OCR activity
-                Toast.makeText(DoctorUserPage.this, "Upload feature coming soon", Toast.LENGTH_SHORT).show();
+                // Launch camera scanner activity
+                Intent intent = new Intent(DoctorUserPage.this, FormScannerActivity.class);
+                startActivity(intent);
             }
         });
 

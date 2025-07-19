@@ -3,6 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sh.hospitaldata">
 
+    <!-- Camera permission for scanning -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- External storage for saving scanned images temporarily -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <!-- Camera feature requirement -->
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -36,6 +46,19 @@
         <activity android:name=".data.DoctorUserPage"
             android:exported="false"
             android:parentActivityName=".MainActivity"/>
+
+        <!-- Camera Scanner Activities -->
+        <activity
+            android:name=".camera.FormScannerActivity"
+            android:exported="false"
+            android:parentActivityName=".data.DoctorUserPage"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".camera.ScanResultActivity"
+            android:exported="false"
+            android:parentActivityName=".camera.FormScannerActivity"
+            android:screenOrientation="portrait" />
 
     </application>
 
