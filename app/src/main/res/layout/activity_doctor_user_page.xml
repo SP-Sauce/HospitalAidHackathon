@@ -7,25 +7,24 @@
     android:padding="24dp"
     android:background="@android:color/white">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hospital Login Portal"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="32dp" />
-
     <Button
-        android:id="@+id/button_patient_login"
+        android:id="@+id/button_upload_old_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Patient Login"
-        android:layout_marginBottom="16dp" />
+        android:text="Upload Old Record"
+        android:layout_marginBottom="16dp"/>
 
     <Button
-        android:id="@+id/button_doctor_login"
+        android:id="@+id/button_add_new_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Doctor Login (Face ID)" />
+        android:text="Add New Record"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/button_send_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Record" />
 
 </LinearLayout>
