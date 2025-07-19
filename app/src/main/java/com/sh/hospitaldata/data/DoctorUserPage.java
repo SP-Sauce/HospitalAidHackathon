@@ -12,7 +12,7 @@ import com.sh.hospitaldata.R;
 
 public class DoctorUserPage extends AppCompatActivity {
 
-    Button uploadOldRecordBtn, addNewRecordBtn, sendRecordBtn;
+    Button uploadOldRecordBtn, addNewRecordBtn, viewAllRecordsBtn, sendRecordBtn;
     private PatientViewModel patientViewModel;
 
     @Override
@@ -22,6 +22,7 @@ public class DoctorUserPage extends AppCompatActivity {
 
         uploadOldRecordBtn = findViewById(R.id.button_upload_old_record);
         addNewRecordBtn = findViewById(R.id.button_add_new_record);
+        viewAllRecordsBtn = findViewById(R.id.button_view_all_records);
         sendRecordBtn = findViewById(R.id.button_send_record);
 
         // Initialize ViewModel
@@ -44,6 +45,15 @@ public class DoctorUserPage extends AppCompatActivity {
             }
         });
 
+        viewAllRecordsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Launch ViewRecordsActivity
+                Intent intent = new Intent(DoctorUserPage.this, ViewRecordsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         sendRecordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,7 +66,7 @@ public class DoctorUserPage extends AppCompatActivity {
         patientViewModel.getAllRecords().observe(this, patientRecords -> {
             // You can add logging here to see when records are added
             if (patientRecords != null) {
-                // Log.d("MainActivity", "Total records: " + patientRecords.size());
+                // Log.d("DoctorUserPage", "Total records: " + patientRecords.size());
             }
         });
     }
