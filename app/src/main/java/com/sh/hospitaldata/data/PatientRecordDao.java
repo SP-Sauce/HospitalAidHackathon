@@ -36,4 +36,17 @@ public interface PatientRecordDao {
 
     @Query("SELECT * FROM patient_records WHERE condition LIKE '%' || :condition || '%'")
     LiveData<List<PatientRecord>> searchByCondition(String condition);
+
+    // New methods for duplicate checking
+    @Query("SELECT * FROM patient_records WHERE LOWER(TRIM(name)) = LOWER(TRIM(:name)) AND age = :age")
+    List<PatientRecord> findDuplicateByNameAndAge(String name, int age);
+
+    @Query("SELECT * FROM patient_records WHERE LOWER(TRIM(name)) = LOWER(TRIM(:name)) AND age = :age AND LOWER(TRIM(gender)) = LOWER(TRIM(:gender))")
+    List<PatientRecord> findDuplicateByNameAgeGender(String name, int age, String gender);
+
+    @Query("SELECT COUNT(*) FROM patient_records WHERE LOWER(TRIM(name)) = LOWER(TRIM(:name)) AND age = :age")
+    int countDuplicatesByNameAndAge(String name, int age);
+
+    @Query("SELECT COUNT(*) FROM patient_records WHERE LOWER(TRIM(name)) = LOWER(TRIM(:name)) AND age = :age AND LOWER(TRIM(gender)) = LOWER(TRIM(:gender))")
+    int countDuplicatesByNameAgeGender(String name, int age, String gender);
 }
