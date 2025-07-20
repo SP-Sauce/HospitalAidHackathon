@@ -36,6 +36,14 @@
             </intent-filter>
         </activity>
 
+        <!-- Patient User Page Activity -->
+        <activity
+            android:name=".PatientUserPage"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:label="Patient Portal"
+            android:theme="@style/Theme.HospitalData" />
+
         <activity
             android:name=".bluetooth.RecordImportActivity"
             android:exported="true"
