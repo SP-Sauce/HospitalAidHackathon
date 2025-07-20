@@ -14,36 +14,58 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Doctor Dashboard"
+        android:text="👨‍⚕️ Doctor Dashboard"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:layout_marginBottom="32dp" />
+        android:layout_marginBottom="32dp"
+        android:textColor="@color/purple_700" />
 
     <Button
         android:id="@+id/button_upload_old_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload Old Record"
-        android:layout_marginBottom="16dp"/>
+        android:text="📷 Upload Old Record"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp"
+        android:padding="16dp" />
 
     <Button
         android:id="@+id/button_add_new_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add New Record"
-        android:layout_marginBottom="16dp"/>
+        android:text="➕ Add New Record"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp"
+        android:padding="16dp" />
 
     <Button
         android:id="@+id/button_view_all_records"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View All Records"
-        android:layout_marginBottom="16dp"/>
+        android:text="📋 View All Records"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp"
+        android:padding="16dp" />
 
     <Button
         android:id="@+id/button_send_record"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send Record" />
+        android:text="📤 Send Records"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:backgroundTint="@color/purple_500" />
+
+    <!-- NEW: Import Records Button -->
+    <Button
+        android:id="@+id/button_import_record"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📥 Import Records"
+        android:layout_marginBottom="24dp"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:backgroundTint="@color/teal_700" />
 
 </LinearLayout>
