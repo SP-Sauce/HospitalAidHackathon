@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Doctor Login");
         builder.setMessage("Biometric authentication not available. Please enter credentials:");
-
         // Create layout for username and password
         android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
         layout.setOrientation(android.widget.LinearLayout.VERTICAL);
