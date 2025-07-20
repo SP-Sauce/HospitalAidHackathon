@@ -142,7 +142,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchDoctorDashboard() {
         Intent intent = new Intent(MainActivity.this, com.sh.hospitaldata.data.DoctorUserPage.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // Remove FLAG_ACTIVITY_CLEAR_TASK to preserve the back stack
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 }
