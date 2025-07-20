@@ -42,7 +42,7 @@ public class DoctorUserPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Launch AddRecordActivity
-                Intent intent = new Intent(DoctorUserPage.this, com.sh.hospitaldata.AddRecordActivity.class);
+                Intent intent = new Intent(DoctorUserPage.this, com.sh.hospitaldata.data.AddRecordActivity.class);
                 startActivity(intent);
             }
         });

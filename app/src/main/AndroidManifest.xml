@@ -34,7 +34,7 @@
         </activity>
 
         <activity
-            android:name=".AddRecordActivity"
+            android:name=".data.AddRecordActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
 
@@ -60,6 +60,11 @@
             android:parentActivityName=".camera.FormScannerActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".data.PatientDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".data.ViewRecordsActivity"
+            android:label="Patient Details" />
     </application>
 
 </manifest>
