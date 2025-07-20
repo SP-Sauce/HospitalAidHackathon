@@ -6,6 +6,9 @@
     <!-- Camera permission for scanning -->
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- Mic permission for speaking progress notes -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <!-- External storage for saving scanned images temporarily -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />

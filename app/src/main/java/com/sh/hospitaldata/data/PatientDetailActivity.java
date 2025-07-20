@@ -3,18 +3,24 @@ package com.sh.hospitaldata.data;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.sh.hospitaldata.data.AddRecordActivity;
 import com.sh.hospitaldata.R;
+
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class PatientDetailActivity extends AppCompatActivity {
 
@@ -35,18 +41,53 @@ public class PatientDetailActivity extends AppCompatActivity {
     private PatientViewModel patientViewModel;
     private PatientRecord currentPatient;
 
+    // Dialog components for speech-to-text
+    private EditText currentEditText;
+    private boolean isAppendMode = true;
+    private AlertDialog currentNotesDialog;
+
+    // Activity result launchers
+    private ActivityResultLauncher<Intent> speechRecognitionLauncher;
+    private ActivityResultLauncher<Intent> editPatientLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_detail);
 
         initViews();
+        initActivityResultLaunchers();
         patientViewModel = new ViewModelProvider(this).get(PatientViewModel.class);
 
         // Get patient data from intent
         getPatientDataFromIntent();
-
         setupClickListeners();
+    }
+
+    private void initActivityResultLaunchers() {
+        // Speech recognition launcher
+        speechRecognitionLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        ArrayList<String> speechResult = result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                        if (speechResult != null && !speechResult.isEmpty()) {
+                            String spokenText = speechResult.get(0);
+                            handleSpeechResult(spokenText);
+                        }
+                    }
+                }
+        );
+
+        // Edit patient launcher
+        editPatientLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        handleEditPatientResult(result.getData());
+                    }
+                }
+        );
     }
 
     private void initViews() {
@@ -142,7 +183,113 @@ public class PatientDetailActivity extends AppCompatActivity {
         buttonDeletePatient.setOnClickListener(v -> showDeleteConfirmationDialog());
         buttonBack.setOnClickListener(v -> finish());
         buttonAdmissionToggle.setOnClickListener(v -> toggleAdmissionStatus());
-        buttonUpdateNotes.setOnClickListener(v -> showUpdateNotesDialog());
+        buttonUpdateNotes.setOnClickListener(v -> showSpeechToTextDialog());
+    }
+
+    private void showSpeechToTextDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Update Progress Notes");
+
+        // Create custom layout with speech-to-text options
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_speech_notes, null);
+        EditText editNotes = dialogView.findViewById(R.id.edit_notes);
+        ImageButton buttonMicrophone = dialogView.findViewById(R.id.button_microphone);
+        Button buttonAppendMode = dialogView.findViewById(R.id.button_append_mode);
+        Button buttonReplaceMode = dialogView.findViewById(R.id.button_replace_mode);
+
+        // Store reference for speech result handling
+        currentEditText = editNotes;
+
+        // Set current notes
+        editNotes.setText(currentPatient.getProgressNotes());
+
+        // Mode selection
+        buttonAppendMode.setOnClickListener(v -> {
+            isAppendMode = true;
+            buttonAppendMode.setBackgroundColor(getResources().getColor(R.color.purple_500));
+            buttonAppendMode.setTextColor(getResources().getColor(android.R.color.white));
+            buttonReplaceMode.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+            buttonReplaceMode.setTextColor(getResources().getColor(android.R.color.black));
+        });
+
+        buttonReplaceMode.setOnClickListener(v -> {
+            isAppendMode = false;
+            buttonReplaceMode.setBackgroundColor(getResources().getColor(R.color.purple_500));
+            buttonReplaceMode.setTextColor(getResources().getColor(android.R.color.white));
+            buttonAppendMode.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+            buttonAppendMode.setTextColor(getResources().getColor(android.R.color.black));
+        });
+
+        // Initialize append mode as selected
+        buttonAppendMode.performClick();
+
+        // Microphone button click
+        buttonMicrophone.setOnClickListener(v -> startSpeechToText());
+
+        builder.setView(dialogView);
+
+        builder.setPositiveButton("Save Notes", (dialog, which) -> {
+            String updatedNotes = editNotes.getText().toString().trim();
+            saveProgressNotes(updatedNotes);
+            currentNotesDialog = null;
+            currentEditText = null;
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            dialog.dismiss();
+            currentNotesDialog = null;
+            currentEditText = null;
+        });
+
+        currentNotesDialog = builder.create();
+        currentNotesDialog.show();
+    }
+
+    private void startSpeechToText() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak your progress notes...");
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+
+        try {
+            speechRecognitionLauncher.launch(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Speech recognition not available on this device", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleSpeechResult(String spokenText) {
+        if (currentEditText != null) {
+            // Add timestamp to speech input
+            String timestamp = getCurrentDate() + " " + getCurrentTime() + ": ";
+            String formattedNote = timestamp + spokenText;
+
+            if (isAppendMode) {
+                // Append mode: add to existing text
+                String currentText = currentEditText.getText().toString();
+                String updatedText;
+                if (currentText.isEmpty()) {
+                    updatedText = formattedNote;
+                } else {
+                    updatedText = currentText + "\n\n" + formattedNote;
+                }
+                currentEditText.setText(updatedText);
+            } else {
+                // Replace mode: replace all text
+                currentEditText.setText(formattedNote);
+            }
+
+            // Show feedback
+            Toast.makeText(this, "Speech added: " + spokenText, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveProgressNotes(String notes) {
+        currentPatient.setProgressNotes(notes);
+        patientViewModel.update(currentPatient);
+        textProgressNotes.setText(notes.isEmpty() ? "No progress notes yet." : notes);
+        Toast.makeText(this, "Progress notes updated", Toast.LENGTH_SHORT).show();
     }
 
     private void editPatient() {
@@ -158,7 +305,23 @@ public class PatientDetailActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_PATIENT_WARD, currentPatient.getWardName());
         intent.putExtra(EXTRA_PATIENT_ADMISSION_DATE, currentPatient.getAdmissionDate());
         intent.putExtra(EXTRA_PATIENT_PROGRESS_NOTES, currentPatient.getProgressNotes());
-        startActivityForResult(intent, 1001);
+        editPatientLauncher.launch(intent);
+    }
+
+    private void handleEditPatientResult(Intent data) {
+        // Update current patient data from the result
+        currentPatient.setName(data.getStringExtra(EXTRA_PATIENT_NAME));
+        currentPatient.setAge(data.getIntExtra(EXTRA_PATIENT_AGE, 0));
+        currentPatient.setGender(data.getStringExtra(EXTRA_PATIENT_GENDER));
+        currentPatient.setCondition(data.getStringExtra(EXTRA_PATIENT_CONDITION));
+        currentPatient.setAdmitted(data.getBooleanExtra(EXTRA_PATIENT_ADMITTED, false));
+        currentPatient.setWardName(data.getStringExtra(EXTRA_PATIENT_WARD));
+        currentPatient.setAdmissionDate(data.getStringExtra(EXTRA_PATIENT_ADMISSION_DATE));
+        currentPatient.setProgressNotes(data.getStringExtra(EXTRA_PATIENT_PROGRESS_NOTES));
+
+        // Refresh the display
+        displayPatientData();
+        Toast.makeText(this, "Patient record updated successfully", Toast.LENGTH_SHORT).show();
     }
 
     private void toggleAdmissionStatus() {
@@ -245,43 +408,6 @@ public class PatientDetailActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void showUpdateNotesDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Update Progress Notes");
-
-        EditText editNotes = new EditText(this);
-        editNotes.setText(currentPatient.getProgressNotes());
-        editNotes.setMinLines(4);
-        editNotes.setMaxLines(8);
-        editNotes.setPadding(32, 32, 32, 32);
-
-        builder.setView(editNotes);
-
-        builder.setPositiveButton("Update", (dialog, which) -> {
-            String updatedNotes = editNotes.getText().toString().trim();
-            currentPatient.setProgressNotes(updatedNotes);
-
-            // Save to database
-            patientViewModel.update(currentPatient);
-
-            // Update display
-            textProgressNotes.setText(updatedNotes.isEmpty() ? "No progress notes yet." : updatedNotes);
-
-            Toast.makeText(this, "Progress notes updated", Toast.LENGTH_SHORT).show();
-        });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-        builder.show();
-    }
-
-    private String getCurrentDate() {
-        java.util.Calendar calendar = java.util.Calendar.getInstance();
-        return String.format("%02d/%02d/%04d",
-                calendar.get(java.util.Calendar.DAY_OF_MONTH),
-                calendar.get(java.util.Calendar.MONTH) + 1,
-                calendar.get(java.util.Calendar.YEAR));
-    }
-
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Delete Patient Record");
@@ -298,14 +424,8 @@ public class PatientDetailActivity extends AppCompatActivity {
 
         builder.setMessage(message);
 
-        builder.setPositiveButton("Delete", (dialog, which) -> {
-            deletePatient();
-        });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
-            dialog.dismiss();
-        });
-
+        builder.setPositiveButton("Delete", (dialog, which) -> deletePatient());
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
         builder.setIcon(android.R.drawable.ic_dialog_alert);
         builder.show();
     }
@@ -323,27 +443,18 @@ public class PatientDetailActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private String getCurrentDate() {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        return String.format("%02d/%02d/%04d",
+                calendar.get(java.util.Calendar.DAY_OF_MONTH),
+                calendar.get(java.util.Calendar.MONTH) + 1,
+                calendar.get(java.util.Calendar.YEAR));
+    }
 
-        if (requestCode == 1001 && resultCode == RESULT_OK) {
-            // Patient was edited, refresh the display
-            if (data != null) {
-                // Update current patient data from the result
-                currentPatient.setName(data.getStringExtra(EXTRA_PATIENT_NAME));
-                currentPatient.setAge(data.getIntExtra(EXTRA_PATIENT_AGE, 0));
-                currentPatient.setGender(data.getStringExtra(EXTRA_PATIENT_GENDER));
-                currentPatient.setCondition(data.getStringExtra(EXTRA_PATIENT_CONDITION));
-                currentPatient.setAdmitted(data.getBooleanExtra(EXTRA_PATIENT_ADMITTED, false));
-                currentPatient.setWardName(data.getStringExtra(EXTRA_PATIENT_WARD));
-                currentPatient.setAdmissionDate(data.getStringExtra(EXTRA_PATIENT_ADMISSION_DATE));
-                currentPatient.setProgressNotes(data.getStringExtra(EXTRA_PATIENT_PROGRESS_NOTES));
-
-                // Refresh the display
-                displayPatientData();
-                Toast.makeText(this, "Patient record updated successfully", Toast.LENGTH_SHORT).show();
-            }
-        }
+    private String getCurrentTime() {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        return String.format("%02d:%02d",
+                calendar.get(java.util.Calendar.HOUR_OF_DAY),
+                calendar.get(java.util.Calendar.MINUTE));
     }
 }
