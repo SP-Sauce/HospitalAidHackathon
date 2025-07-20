@@ -1,1 +1,1 @@
-# HospitalAidHackathon
+# Shifaa - Deen Developers Hackathon
