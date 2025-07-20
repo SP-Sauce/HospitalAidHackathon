@@ -9,11 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.sh.hospitaldata.R;
+import com.sh.hospitaldata.bluetooth.RecordExportActivity;
 import com.sh.hospitaldata.camera.FormScannerActivity;
 
 public class DoctorUserPage extends AppCompatActivity {
 
-    Button uploadOldRecordBtn, addNewRecordBtn, viewAllRecordsBtn, sendRecordBtn;
+    Button uploadOldRecordBtn, addNewRecordBtn, viewAllRecordsBtn, sendRecordBtn, importRecordBtn;
     private PatientViewModel patientViewModel;
 
     @Override
@@ -25,6 +26,7 @@ public class DoctorUserPage extends AppCompatActivity {
         addNewRecordBtn = findViewById(R.id.button_add_new_record);
         viewAllRecordsBtn = findViewById(R.id.button_view_all_records);
         sendRecordBtn = findViewById(R.id.button_send_record);
+        importRecordBtn = findViewById(R.id.button_import_record);
 
         // Initialize ViewModel
         patientViewModel = new ViewModelProvider(this).get(PatientViewModel.class);
@@ -59,8 +61,9 @@ public class DoctorUserPage extends AppCompatActivity {
         sendRecordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Launch Bluetooth send activity
-                Toast.makeText(DoctorUserPage.this, "Send feature coming soon", Toast.LENGTH_SHORT).show();
+                // Launch Record Export Activity
+                Intent intent = new Intent(DoctorUserPage.this, RecordExportActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -69,6 +72,15 @@ public class DoctorUserPage extends AppCompatActivity {
             // You can add logging here to see when records are added
             if (patientRecords != null) {
                 // Log.d("DoctorUserPage", "Total records: " + patientRecords.size());
+            }
+        });
+
+        importRecordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Launch Record Import Activity
+                Intent intent = new Intent(DoctorUserPage.this, com.sh.hospitaldata.sharing.RecordImportActivity.class);
+                startActivity(intent);
             }
         });
     }

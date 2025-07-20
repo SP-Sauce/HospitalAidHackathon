@@ -34,6 +34,41 @@
         </activity>
 
         <activity
+            android:name=".sharing.RecordImportActivity"
+            android:exported="true"
+            android:parentActivityName=".data.DoctorUserPage"
+            android:label="Import Records"
+            android:theme="@style/Theme.HospitalData">
+
+            <!-- Intent filter to handle .hdata files -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.hdata" />
+                <data android:host="*" />
+            </intent-filter>
+
+            <!-- Intent filter for content URIs -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" />
+                <data android:mimeType="application/octet-stream" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".bluetooth.RecordExportActivity"
+            android:exported="false"
+            android:parentActivityName=".data.DoctorUserPage"
+            android:label="Export Records" />
+
+        <activity
             android:name=".AddRecordActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
