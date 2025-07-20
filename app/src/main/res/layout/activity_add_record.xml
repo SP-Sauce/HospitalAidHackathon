@@ -8,14 +8,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:paddingTop="24dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
 
-        <!-- Spacer to push content down -->
+        <!-- Reduced spacer since we now have proper margin -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="64dp" />
+            android:layout_height="16dp" />
 
         <TextView
+            android:id="@+id/text_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add Patient Record"
@@ -23,6 +29,16 @@
             android:textStyle="bold"
             android:gravity="center"
             android:layout_marginBottom="24dp" />
+
+        <!-- Basic Patient Information Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Basic Information"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/purple_700"
+            android:layout_marginBottom="12dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -77,11 +93,83 @@
                 android:lines="3" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Hospital Admission Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hospital Admission (Optional)"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/purple_700"
+            android:layout_marginBottom="12dp" />
+
+        <CheckBox
+            android:id="@+id/checkbox_admitted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Patient is admitted to hospital"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Admission Details Container (initially hidden) -->
+        <LinearLayout
+            android:id="@+id/layout_admission_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/edit_text_ward"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ward Name (e.g., ICU, Emergency, Cardiology)"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/edit_text_admission_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Admission Date (DD/MM/YYYY)"
+                    android:inputType="date"
+                    android:focusable="false"
+                    android:clickable="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/edit_text_progress_notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Progress Notes (treatment updates, observations, etc.)"
+                    android:inputType="textMultiLine"
+                    android:lines="4"
+                    android:gravity="top" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginTop="24dp">
 
             <Button
                 android:id="@+id/button_cancel"
