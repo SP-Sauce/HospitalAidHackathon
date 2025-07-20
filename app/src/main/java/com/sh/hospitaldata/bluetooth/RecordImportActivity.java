@@ -1,4 +1,4 @@
-package com.sh.hospitaldata.sharing;
+package com.sh.hospitaldata.bluetooth;
 
 import android.content.Intent;
 import android.net.Uri;

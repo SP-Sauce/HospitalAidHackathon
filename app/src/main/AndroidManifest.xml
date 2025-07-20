@@ -6,6 +6,9 @@
     <!-- Camera permission for scanning -->
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- Mic permission for speaking progress notes -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <!-- External storage for saving scanned images temporarily -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
@@ -34,7 +37,7 @@
         </activity>
 
         <activity
-            android:name=".sharing.RecordImportActivity"
+            android:name=".bluetooth.RecordImportActivity"
             android:exported="true"
             android:parentActivityName=".data.DoctorUserPage"
             android:label="Import Records"
@@ -69,7 +72,7 @@
             android:label="Export Records" />
 
         <activity
-            android:name=".AddRecordActivity"
+            android:name=".data.AddRecordActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
 
@@ -95,6 +98,11 @@
             android:parentActivityName=".camera.FormScannerActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".data.PatientDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".data.ViewRecordsActivity"
+            android:label="Patient Details" />
     </application>
 
 </manifest>

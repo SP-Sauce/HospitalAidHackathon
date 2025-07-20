@@ -3,13 +3,9 @@ package com.sh.hospitaldata.camera;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,8 +23,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.sh.hospitaldata.R;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class FormScannerActivity extends AppCompatActivity {
@@ -39,7 +33,6 @@ public class FormScannerActivity extends AppCompatActivity {
 
     private PreviewView cameraPreview;
     private Button buttonScan;
-    private ImageButton buttonClose;
     private ImageCapture imageCapture;
 
     @Override
@@ -61,12 +54,12 @@ public class FormScannerActivity extends AppCompatActivity {
     private void initViews() {
         cameraPreview = findViewById(R.id.camera_preview);
         buttonScan = findViewById(R.id.button_scan);
-        buttonClose = findViewById(R.id.button_close);
     }
 
     private void setupClickListeners() {
         buttonScan.setOnClickListener(v -> takePhoto());
-        buttonClose.setOnClickListener(v -> finish());
+
+        // Note: Close button removed - users can use system back button or navigation
     }
 
     private void startCamera() {

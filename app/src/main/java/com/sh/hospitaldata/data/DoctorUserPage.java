@@ -44,7 +44,7 @@ public class DoctorUserPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Launch AddRecordActivity
-                Intent intent = new Intent(DoctorUserPage.this, com.sh.hospitaldata.AddRecordActivity.class);
+                Intent intent = new Intent(DoctorUserPage.this, com.sh.hospitaldata.data.AddRecordActivity.class);
                 startActivity(intent);
             }
         });
@@ -79,7 +79,7 @@ public class DoctorUserPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Launch Record Import Activity
-                Intent intent = new Intent(DoctorUserPage.this, com.sh.hospitaldata.sharing.RecordImportActivity.class);
+                Intent intent = new Intent(DoctorUserPage.this, com.sh.hospitaldata.bluetooth.RecordImportActivity.class);
                 startActivity(intent);
             }
         });
