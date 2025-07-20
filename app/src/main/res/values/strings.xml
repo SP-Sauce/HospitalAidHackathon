@@ -1,3 +1,18 @@
 <resources>
-    <string name="app_name">hospitalData</string>
+    <string name="app_name">SHIFAA</string>
+
+    <!-- New strings for the full name and description -->
+    <string name="app_full_name">SHIFAA (شفاء)</string>
+    <string name="app_description">Secure Hospital Information File Administrative Application</string>
+    <string name="app_meaning">Healing • Cure • Recovery</string>
+
+    <!-- Activity titles -->
+    <string name="doctor_dashboard">SHIFAA - Doctor Dashboard</string>
+    <string name="patient_portal">SHIFAA - Patient Portal</string>
+    <string name="patient_details">Patient Details</string>
+    <string name="import_records">Import Records</string>
+    <string name="export_records">Export Records</string>
+    <string name="add_record">Add Patient Record</string>
+    <string name="view_records">View All Records</string>
+    <string name="scan_form">Scan Medical Form</string>
 </resources>
