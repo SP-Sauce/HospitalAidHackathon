@@ -11,14 +11,23 @@
     android:paddingEnd="24dp"
     android:paddingBottom="24dp">
 
+    <!-- SHIFAA Header -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SHIFAA (شفاء)"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/purple_700" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="👨‍⚕️ Doctor Dashboard"
-        android:textSize="24sp"
-        android:textStyle="bold"
+        android:textSize="20sp"
         android:layout_marginBottom="32dp"
-        android:textColor="@color/purple_700" />
+        android:textColor="@color/purple_500" />
 
     <Button
         android:id="@+id/button_upload_old_record"
@@ -57,7 +66,7 @@
         android:padding="16dp"
         android:backgroundTint="@color/purple_500" />
 
-    <!-- NEW: Import Records Button -->
+    <!-- Import Records Button -->
     <Button
         android:id="@+id/button_import_record"
         android:layout_width="match_parent"
@@ -67,5 +76,15 @@
         android:textSize="16sp"
         android:padding="16dp"
         android:backgroundTint="@color/teal_700" />
+
+    <!-- SHIFAA Footer -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Healing • Cure • Recovery"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        android:textColor="@color/purple_500" />
 
 </LinearLayout>

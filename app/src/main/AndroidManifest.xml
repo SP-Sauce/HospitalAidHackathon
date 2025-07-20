@@ -24,41 +24,49 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.HospitalData"
+        android:theme="@style/Theme.SHIFAA"
         tools:targetApi="31">
 
+        <!-- SPLASH SCREEN - LAUNCHER ACTIVITY -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- MAIN ACTIVITY -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="@string/app_name" />
+
         <!-- Patient User Page Activity -->
         <activity
             android:name=".PatientUserPage"
             android:exported="false"
             android:parentActivityName=".MainActivity"
-            android:label="Patient Portal"
-            android:theme="@style/Theme.HospitalData" />
+            android:label="@string/patient_portal"
+            android:theme="@style/Theme.SHIFAA" />
 
         <activity
             android:name=".bluetooth.RecordImportActivity"
             android:exported="true"
             android:parentActivityName=".data.DoctorUserPage"
-            android:label="Import Records"
-            android:theme="@style/Theme.HospitalData">
+            android:label="@string/import_records"
+            android:theme="@style/Theme.SHIFAA">
 
-            <!-- Intent filter to handle .hdata files -->
+            <!-- Intent filter to handle .shifaa files (renamed from .hdata) -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="file" />
                 <data android:mimeType="*/*" />
-                <data android:pathPattern=".*\\.hdata" />
+                <data android:pathPattern="*\\.shifaa" />
                 <data android:host="*" />
             </intent-filter>
 
@@ -77,28 +85,32 @@
             android:name=".bluetooth.RecordExportActivity"
             android:exported="false"
             android:parentActivityName=".data.DoctorUserPage"
-            android:label="Export Records" />
+            android:label="@string/export_records" />
 
         <activity
             android:name=".data.AddRecordActivity"
             android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:label="@string/add_record" />
 
         <activity
             android:name=".data.ViewRecordsActivity"
             android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:label="@string/view_records" />
 
         <activity android:name=".data.DoctorUserPage"
             android:exported="false"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity"
+            android:label="@string/doctor_dashboard" />
 
         <!-- Camera Scanner Activities -->
         <activity
             android:name=".camera.FormScannerActivity"
             android:exported="false"
             android:parentActivityName=".data.DoctorUserPage"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:label="@string/scan_form" />
 
         <activity
             android:name=".camera.ScanResultActivity"
@@ -110,7 +122,7 @@
             android:name=".data.PatientDetailActivity"
             android:exported="false"
             android:parentActivityName=".data.ViewRecordsActivity"
-            android:label="Patient Details" />
+            android:label="@string/patient_details" />
     </application>
 
 </manifest>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="150dp"
+    android:height="150dp"
+    android:viewportWidth="150"
+    android:viewportHeight="150">
+
+    <!-- Background Circle -->
+    <path
+        android:fillColor="#E3F2FD"
+        android:pathData="M75,75m-70,0a70,70 0,1 1,140 0a70,70 0,1 1,-140 0" />
+
+    <!-- Medical Cross - Vertical bar -->
+    <path
+        android:fillColor="#1976D2"
+        android:pathData="M65,45h20v60h-20z" />
+
+    <!-- Medical Cross - Horizontal bar -->
+    <path
+        android:fillColor="#1976D2"
+        android:pathData="M45,65h60v20h-60z" />
+
+    <!-- Small heart -->
+    <path
+        android:fillColor="#F44336"
+        android:pathData="M75,115c-8,-12 -20,-20 -20,-28c0,-6 5,-11 11,-11c3,0 6,2 9,4c3,-2 6,-4 9,-4c6,0 11,5 11,11c0,8 -12,16 -20,28z" />
+
+</vector>
