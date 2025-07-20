@@ -4,26 +4,14 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <!-- Camera Preview -->
+    <!-- Camera Preview takes full screen -->
     <androidx.camera.view.PreviewView
         android:id="@+id/camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/button_scan" />
 
-    <!-- Camera View Label -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:text="Camera view"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:background="#80000000"
-        android:padding="8dp" />
-
-    <!-- Scan Button -->
+    <!-- Scan Button at bottom -->
     <Button
         android:id="@+id/button_scan"
         android:layout_width="match_parent"
@@ -34,17 +22,5 @@
         android:textSize="18sp"
         android:background="@color/purple_500"
         android:textColor="@android:color/white" />
-
-    <!-- Close Button -->
-    <ImageButton
-        android:id="@+id/button_close"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:tint="@android:color/white" />
 
 </RelativeLayout>
